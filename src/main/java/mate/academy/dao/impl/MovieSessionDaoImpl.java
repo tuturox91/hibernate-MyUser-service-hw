@@ -3,6 +3,7 @@ package mate.academy.dao.impl;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
@@ -26,14 +27,14 @@ public class MovieSessionDaoImpl implements MovieSessionDao {
         try {
             session = HibernateUtil.getSessionFactory().openSession();
             transaction = session.beginTransaction();
-            session.persist(movieSession);
+            session.save(movieSession);
             transaction.commit();
             return movieSession;
         } catch (Exception e) {
             if (transaction != null) {
                 transaction.rollback();
             }
-            throw new DataProcessingException("Can't insert to DB movie session" + movieSession, e);
+            throw new DataProcessingException("Can't insert movie session" + movieSession, e);
         } finally {
             if (session != null) {
                 session.close();
@@ -56,15 +57,18 @@ public class MovieSessionDaoImpl implements MovieSessionDao {
             root.fetch("movie");
             root.fetch("cinemaHall");
             return session.createQuery(criteriaQuery).getResultList();
+        } catch (Exception e) {
+            throw new DataProcessingException("Can't get available sessions for movie with id: "
+                    + movieId + " for date: " + date, e);
         }
     }
 
     @Override
-    public MovieSession get(Long id) {
+    public Optional<MovieSession> get(Long id) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            return session.get(MovieSession.class, id);
+            return Optional.ofNullable(session.get(MovieSession.class, id));
         } catch (Exception e) {
-            throw new DataProcessingException("Can't get MovieSession by id: " + id, e);
+            throw new DataProcessingException("Can't get a movie session by id: " + id, e);
         }
     }
 }

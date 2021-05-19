@@ -1,6 +1,7 @@
 package mate.academy.dao.impl;
 
 import java.util.List;
+import java.util.Optional;
 import javax.persistence.criteria.CriteriaQuery;
 import mate.academy.dao.CinemaHallDao;
 import mate.academy.exception.DataProcessingException;
@@ -19,14 +20,14 @@ public class CinemaHallDaoImpl implements CinemaHallDao {
         try {
             session = HibernateUtil.getSessionFactory().openSession();
             transaction = session.beginTransaction();
-            session.persist(cinemaHall);
+            session.save(cinemaHall);
             transaction.commit();
             return cinemaHall;
         } catch (Exception e) {
             if (transaction != null) {
                 transaction.rollback();
             }
-            throw new DataProcessingException("Can't insert to DB CinemaHall: " + cinemaHall, e);
+            throw new DataProcessingException("Can't insert cinema hall: " + cinemaHall, e);
         } finally {
             if (session != null) {
                 session.close();
@@ -35,11 +36,11 @@ public class CinemaHallDaoImpl implements CinemaHallDao {
     }
 
     @Override
-    public CinemaHall get(Long id) {
+    public Optional<CinemaHall> get(Long id) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            return session.get(CinemaHall.class, id);
+            return Optional.ofNullable(session.get(CinemaHall.class, id));
         } catch (Exception e) {
-            throw new DataProcessingException("Can't get CinemaHall by id: " + id, e);
+            throw new DataProcessingException("Can't get a cinema hall by id: " + id, e);
         }
     }
 
@@ -50,6 +51,8 @@ public class CinemaHallDaoImpl implements CinemaHallDao {
                     .createQuery(CinemaHall.class);
             criteriaQuery.from(CinemaHall.class);
             return session.createQuery(criteriaQuery).getResultList();
+        } catch (Exception e) {
+            throw new DataProcessingException("Can't get all cinema halls", e);
         }
     }
 }
