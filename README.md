@@ -35,6 +35,7 @@ Your task is to implement the following steps:
             User register(String email, String password);
         }
         ````
+    - Create your own checked `RegistrationException` and use it in `register()` method
 
     - Please don’t forget to use salt and password hashing
 
