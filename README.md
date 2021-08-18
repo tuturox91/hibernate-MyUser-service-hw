@@ -32,9 +32,10 @@ Your task is to implement the following steps:
             * @param password - user password
             * @return new user instance
             */
-            User register(String email, String password);
+            User register(String email, String password) throws RegistrationException;
         }
         ````
+    - Create your own checked `RegistrationException` and `AuthenticationException` to use it in `register()` and `login()` methods respectively
 
     - Please don’t forget to use salt and password hashing
 
